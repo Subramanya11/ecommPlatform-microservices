@@ -1,13 +1,13 @@
-package ecom.discovery_service;
+package com.config_server;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class DiscoveryServiceApplication {
+public class ConfigServerApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(DiscoveryServiceApplication.class, args);
+		SpringApplication.run(ConfigServerApplication.class, args);
 	}
 
 }
