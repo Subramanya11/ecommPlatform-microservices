@@ -1,11 +1,14 @@
 package com.auth_service.service.impl;
 
+import com.auth_service.dto.request.LoginRequest;
 import com.auth_service.dto.request.RegisterRequest;
+import com.auth_service.dto.response.LoginResponse;
 import com.auth_service.dto.response.RegisterResponse;
 import com.auth_service.entity.Role;
 import com.auth_service.entity.User;
 import com.auth_service.entity.enums.RoleName;
 import com.auth_service.exception.EmailAlreadyExistsException;
+import com.auth_service.exception.InvalidCredentialsException;
 import com.auth_service.repository.RoleRepository;
 import com.auth_service.repository.UserRepository;
 import com.auth_service.service.AuthService;
@@ -60,5 +63,22 @@ public class AuthServiceImpl implements AuthService {
                 .message("Registration Successful")
                 .build();
 
+    }
+    @Override
+    public LoginResponse login(LoginRequest request) {
+
+        // Step 1: Find user by email
+        User user = userRepository.findByEmail(request.getEmail())
+                .orElseThrow(InvalidCredentialsException::new);
+
+        // Step 2: Verify password
+        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+            throw new InvalidCredentialsException();
+        }
+
+        // Step 3: Return success
+        return LoginResponse.builder()
+                .message("Login Successful")
+                .build();
     }
 }
