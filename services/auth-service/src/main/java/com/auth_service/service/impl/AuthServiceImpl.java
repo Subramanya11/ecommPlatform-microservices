@@ -11,6 +11,7 @@ import com.auth_service.exception.EmailAlreadyExistsException;
 import com.auth_service.exception.InvalidCredentialsException;
 import com.auth_service.repository.RoleRepository;
 import com.auth_service.repository.UserRepository;
+import com.auth_service.security.JwtService;
 import com.auth_service.service.AuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -25,6 +26,7 @@ public class AuthServiceImpl implements AuthService {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
+    private final JwtService jwtService;
 
     @Override
     public RegisterResponse register(RegisterRequest request) {
@@ -77,7 +79,13 @@ public class AuthServiceImpl implements AuthService {
         }
 
         // Step 3: Return success
+        String jwtToken = jwtService.generateToken(user.getEmail());
+
         return LoginResponse.builder()
+                .token(jwtToken)
+                .tokenType("Bearer")
+                .email(user.getEmail())
+                .firstName(user.getFirstName())
                 .message("Login Successful")
                 .build();
     }
