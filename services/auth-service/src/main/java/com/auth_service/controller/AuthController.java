@@ -4,6 +4,7 @@ import com.auth_service.dto.request.LoginRequest;
 import com.auth_service.dto.request.RegisterRequest;
 import com.auth_service.dto.response.LoginResponse;
 import com.auth_service.dto.response.RegisterResponse;
+import com.auth_service.dto.response.UserProfileResponse;
 import com.auth_service.service.AuthService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -34,5 +35,12 @@ public class AuthController {
         LoginResponse response = authService.login(request);
 
         return ResponseEntity.ok(response);
+    }
+    @GetMapping("/me")
+    public ResponseEntity<UserProfileResponse> currentUser() {
+
+        return ResponseEntity.ok(
+                authService.getCurrentUser()
+        );
     }
 }
