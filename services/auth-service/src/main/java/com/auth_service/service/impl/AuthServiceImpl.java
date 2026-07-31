@@ -4,6 +4,7 @@ import com.auth_service.dto.request.LoginRequest;
 import com.auth_service.dto.request.RegisterRequest;
 import com.auth_service.dto.response.LoginResponse;
 import com.auth_service.dto.response.RegisterResponse;
+import com.auth_service.entity.RefreshToken;
 import com.auth_service.entity.Role;
 import com.auth_service.entity.User;
 import com.auth_service.entity.enums.RoleName;
@@ -13,6 +14,7 @@ import com.auth_service.repository.RoleRepository;
 import com.auth_service.repository.UserRepository;
 import com.auth_service.security.JwtService;
 import com.auth_service.service.AuthService;
+import com.auth_service.service.RefreshTokenService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -32,6 +34,7 @@ public class AuthServiceImpl implements AuthService {
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
+    private final RefreshTokenService refreshTokenService;
 
     @Override
     public RegisterResponse register(RegisterRequest request) {
@@ -84,13 +87,18 @@ public class AuthServiceImpl implements AuthService {
         }
 
         // Step 3: Return success
-        String jwtToken = jwtService.generateToken(user.getEmail());
+//        String jwtToken = jwtService.generateToken(user.getEmail());
+        String accessToken = jwtService.generateToken(user.getEmail());
+
+        RefreshToken refreshToken = refreshTokenService.createRefreshToken(user);
 
         return LoginResponse.builder()
-                .token(jwtToken)
+                .accessToken(accessToken)
+                .refreshToken(refreshToken.getToken())
                 .tokenType("Bearer")
                 .email(user.getEmail())
                 .firstName(user.getFirstName())
+                .expiresIn(900000L)
                 .message("Login Successful")
                 .build();
     }

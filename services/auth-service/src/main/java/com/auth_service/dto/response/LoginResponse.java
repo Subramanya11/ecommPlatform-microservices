@@ -7,13 +7,21 @@ import lombok.Data;
 @Builder
 public class LoginResponse {
 
-    private String token;
+    // JWT Access Token
+    private String accessToken;
 
+    // Refresh Token
+    private String refreshToken;
+
+    // Bearer
     private String tokenType;
+
 
     private String email;
 
     private String firstName;
+    // Token Expiry (15 minutes)
+    private Long expiresIn;
 
     private String message;
 
