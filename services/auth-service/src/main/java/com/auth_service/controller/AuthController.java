@@ -1,8 +1,10 @@
 package com.auth_service.controller;
 
 import com.auth_service.dto.request.LoginRequest;
+import com.auth_service.dto.request.RefreshTokenRequest;
 import com.auth_service.dto.request.RegisterRequest;
 import com.auth_service.dto.response.LoginResponse;
+import com.auth_service.dto.response.RefreshTokenResponse;
 import com.auth_service.dto.response.RegisterResponse;
 import com.auth_service.dto.response.UserProfileResponse;
 import com.auth_service.service.AuthService;
@@ -41,6 +43,14 @@ public class AuthController {
 
         return ResponseEntity.ok(
                 authService.getCurrentUser()
+        );
+    }
+    @PostMapping("/refresh")
+    public ResponseEntity<RefreshTokenResponse> refreshToken(
+            @RequestBody RefreshTokenRequest request) {
+
+        return ResponseEntity.ok(
+                authService.refreshToken(request)
         );
     }
 }

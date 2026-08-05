@@ -1,8 +1,10 @@
 package com.auth_service.service.impl;
 
 import com.auth_service.dto.request.LoginRequest;
+import com.auth_service.dto.request.RefreshTokenRequest;
 import com.auth_service.dto.request.RegisterRequest;
 import com.auth_service.dto.response.LoginResponse;
+import com.auth_service.dto.response.RefreshTokenResponse;
 import com.auth_service.dto.response.RegisterResponse;
 import com.auth_service.entity.RefreshToken;
 import com.auth_service.entity.Role;
@@ -126,6 +128,25 @@ public class AuthServiceImpl implements AuthService {
                                 .map(role -> role.getName().name())
                                 .collect(Collectors.toSet())
                 )
+                .build();
+    }
+    @Override
+    public RefreshTokenResponse refreshToken(
+            RefreshTokenRequest request) {
+
+        RefreshToken refreshToken =
+                refreshTokenService.verifyExpiration(
+                        request.getRefreshToken());
+
+        User user = refreshToken.getUser();
+
+        String accessToken =
+                jwtService.generateToken(user.getEmail());
+
+        return RefreshTokenResponse.builder()
+                .accessToken(accessToken)
+                .refreshToken(refreshToken.getToken())
+                .tokenType("Bearer")
                 .build();
     }
 }
