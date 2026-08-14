@@ -2,16 +2,12 @@ package com.auth_service.config;
 
 import com.auth_service.security.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
-
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
-
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
@@ -31,10 +27,10 @@ public class SecurityConfig {
             HttpSecurity http) throws Exception {
 
         http
-                // JWT does not use browser sessions
+                // JWT APIs don't need CSRF protection
                 .csrf(csrf -> csrf.disable())
 
-                // Do not create HTTP sessions
+                // We don't use server-side sessions
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(
                                 SessionCreationPolicy.STATELESS
@@ -54,7 +50,7 @@ public class SecurityConfig {
                         .anyRequest().authenticated()
                 )
 
-                // Add JWT filter before Spring's username/password filter
+                // Add our JWT filter before Spring's authentication filter
                 .addFilterBefore(
                         jwtAuthenticationFilter,
                         UsernamePasswordAuthenticationFilter.class

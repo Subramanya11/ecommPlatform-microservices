@@ -5,7 +5,6 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-
 import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -21,7 +20,6 @@ import java.io.IOException;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtService jwtService;
-
     private final CustomUserDetailsService userDetailsService;
 
     @Override
@@ -36,13 +34,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         // 2. If JWT is not present, continue normally
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-
             filterChain.doFilter(request, response);
-
             return;
         }
 
-        // 3. Remove "Bearer " prefix
+        // 3. Remove "Bearer " from the header
         String jwt = authHeader.substring(7);
 
         try {
@@ -50,7 +46,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             // 4. Extract email from JWT
             String email = jwtService.extractUsername(jwt);
 
-            // 5. Only authenticate if SecurityContext is currently empty
+            // 5. Only authenticate if nobody is authenticated yet
             if (email != null &&
                     SecurityContextHolder.getContext().getAuthentication() == null) {
 
@@ -59,7 +55,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                         userDetailsService.loadUserByUsername(email);
 
                 // 7. Validate JWT
-                if (jwtService.isTokenValid(jwt, userDetails.getUsername())) {
+                if (jwtService.isTokenValid(jwt, email)) {
 
                     // 8. Create Spring Security authentication
                     UsernamePasswordAuthenticationToken authentication =
@@ -69,7 +65,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                                     userDetails.getAuthorities()
                             );
 
-                    // 9. Attach request information
+                    // 9. Add request information
                     authentication.setDetails(
                             new WebAuthenticationDetailsSource()
                                     .buildDetails(request)
@@ -83,7 +79,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             }
 
         } catch (Exception ex) {
-
             // Invalid/expired JWT
             // Don't authenticate the request.
         }
