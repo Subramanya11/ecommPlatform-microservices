@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.security.core.Authentication;
 
 @RestController
 @RequestMapping("/api/v1/auth")
@@ -51,6 +52,14 @@ public class AuthController {
 
         return ResponseEntity.ok(
                 authService.refreshToken(request)
+        );
+    }
+    @GetMapping("/me")
+    public ResponseEntity<String> getCurrentUser(
+            Authentication authentication) {
+
+        return ResponseEntity.ok(
+                "Logged in user: " + authentication.getName()
         );
     }
 }
