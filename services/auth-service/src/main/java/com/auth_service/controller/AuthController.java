@@ -39,13 +39,13 @@ public class AuthController {
 
         return ResponseEntity.ok(response);
     }
-    @GetMapping("/me")
-    public ResponseEntity<UserProfileResponse> currentUser() {
-
-        return ResponseEntity.ok(
-                authService.getCurrentUser()
-        );
-    }
+//    @GetMapping("/me")
+//    public ResponseEntity<UserProfileResponse> currentUser() {
+//
+//        return ResponseEntity.ok(
+//                authService.getCurrentUser()
+//        );
+//    }
     @PostMapping("/refresh")
     public ResponseEntity<RefreshTokenResponse> refreshToken(
             @RequestBody RefreshTokenRequest request) {
