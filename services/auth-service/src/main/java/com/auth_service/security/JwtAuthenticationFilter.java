@@ -20,7 +20,6 @@ import java.io.IOException;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtService jwtService;
-
     private final CustomUserDetailsService userDetailsService;
 
     @Override
@@ -30,22 +29,19 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             @NonNull FilterChain filterChain)
             throws ServletException, IOException {
 
-        String authHeader =
-                request.getHeader("Authorization");
+        String authHeader = request.getHeader("Authorization");
 
-//        if (authHeader == null ||
-//                !authHeader.startsWith("Bearer ")) {
-//
-//            filterChain.doFilter(request, response);
-//            return;
-//        }
+        // No JWT -> continue normally
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
 
         String jwt = authHeader.substring(7);
 
         try {
 
-            String email =
-                    jwtService.extractUsername(jwt);
+            String email = jwtService.extractUsername(jwt);
 
             if (email != null &&
                     SecurityContextHolder
@@ -53,10 +49,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                             .getAuthentication() == null) {
 
                 UserDetails userDetails =
-                        userDetailsService
-                                .loadUserByUsername(email);
+                        userDetailsService.loadUserByUsername(email);
 
-                if (jwtService.isTokenValid(jwt, email)) {
+                if (jwtService.isTokenValid(jwt, String.valueOf(userDetails))) {
 
                     UsernamePasswordAuthenticationToken authentication =
                             new UsernamePasswordAuthenticationToken(
@@ -78,9 +73,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         } catch (Exception ex) {
 
-            // Invalid or expired JWT.
-            // Request remains unauthenticated.
-
+            System.out.println("JWT authentication failed: "
+                    + ex.getMessage());
         }
 
         filterChain.doFilter(request, response);
