@@ -84,7 +84,16 @@ public class AuthServiceImpl implements AuthService {
                 .orElseThrow(InvalidCredentialsException::new);
 
         // Step 2: Verify password
-        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+        boolean passwordMatches =
+                passwordEncoder.matches(
+                        request.getPassword(),
+                        user.getPassword()
+                );
+
+        System.out.println("LOGIN EMAIL = " + user.getEmail());
+        System.out.println("PASSWORD MATCH = " + passwordMatches);
+
+        if (!passwordMatches) {
             throw new InvalidCredentialsException();
         }
 

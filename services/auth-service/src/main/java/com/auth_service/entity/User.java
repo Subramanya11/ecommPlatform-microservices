@@ -68,4 +68,11 @@ public class User extends BaseEntity {
     )
     @Builder.Default
     private Set<RefreshToken> refreshTokens = new HashSet<>();
+
+    @PrePersist
+    void prePersist() {
+        if (uuid == null) {
+            uuid = UUID.randomUUID();
+        }
+    }
 }
