@@ -158,4 +158,9 @@ public class AuthServiceImpl implements AuthService {
                 .tokenType("Bearer")
                 .build();
     }
+    @Override
+    public void logout(String refreshToken) {
+
+        refreshTokenService.deleteByToken(refreshToken);
+    }
 }

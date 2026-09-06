@@ -62,4 +62,14 @@ public class AuthController {
                 "Logged in user: " + authentication.getName()
         );
     }
+    @PostMapping("/logout")
+    public ResponseEntity<String> logout(
+            @RequestBody RefreshTokenRequest request) {
+
+        authService.logout(request.getRefreshToken());
+
+        return ResponseEntity.ok(
+                "Logout successful"
+        );
+    }
 }

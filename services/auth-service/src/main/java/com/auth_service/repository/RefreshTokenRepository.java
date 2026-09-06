@@ -22,4 +22,5 @@ public interface RefreshTokenRepository extends JpaRepository<RefreshToken, Long
      * Check whether a token exists.
      */
     boolean existsByToken(String token);
+    void deleteByToken(String token);
 }
