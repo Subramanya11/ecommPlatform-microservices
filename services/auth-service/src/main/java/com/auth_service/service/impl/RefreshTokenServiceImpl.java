@@ -4,6 +4,7 @@ import com.auth_service.entity.RefreshToken;
 import com.auth_service.entity.User;
 import com.auth_service.repository.RefreshTokenRepository;
 import com.auth_service.service.RefreshTokenService;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -13,6 +14,7 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class RefreshTokenServiceImpl implements RefreshTokenService {
 
